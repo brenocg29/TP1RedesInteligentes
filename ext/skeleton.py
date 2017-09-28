@@ -42,8 +42,9 @@ import pox.lib.recoco as recoco               # Multitasking library
 # Create a logger for this component
 log = core.getLogger()
 mac_port = {}
+admin_port = 0 #change this
 restrict_mac = {}
-class Color(Enum):
+class Restrict(Enum):
 	DROP = 1
 	FORWARD = 2
 	FORANDTRACK = 3
@@ -65,7 +66,8 @@ def packet_in(event):
 				log.info("learning" + str(packet.src) +"is in port" + str(event.ofp.in_port))
 				mac_port[packet.src] = (event.ofp.in_port,restrict_mac[packet.src])
 			if packet.src not in restrict_mac:
-				mac_port[packet.src] = (event.ofp.in_port,2)
+				mac_port[packet.src] = (event.ofp.in_port,Restrict.FORWARD)
+
 			
 
 		if packet.dst in mac_port:
@@ -73,6 +75,12 @@ def packet_in(event):
 			#take action in conformity to each packet restriction
 			if mac_port[packet.dst][1]== 2:
 				action = of.ofp_action_output(port = mac_port[packet.dst][0])
+			if mac_port[packet.dst][1] == 1:
+				log.info("Dropped")
+			if mac_port[packet.dts][1] == 4:
+				action = of.ofp_action_output(port = admin_port)
+			
+
 		else:
 			action = of.ofp_action_output(port = of.OFPP_ALL)
 		msg.actions.append(action)
