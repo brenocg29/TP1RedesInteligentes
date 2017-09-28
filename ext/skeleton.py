@@ -64,10 +64,15 @@ def packet_in(event):
 				#TODO take action
 				log.info("learning" + str(packet.src) +"is in port" + str(event.ofp.in_port))
 				mac_port[packet.src] = (event.ofp.in_port,restrict_mac[packet.src])
+			if packet.src not in restrict_mac:
+				mac_port[packet.src] = (event.ofp.in_port,2)
+			
+
 		if packet.dst in mac_port:
 			log.info("send to " + str(packet.dst) + "known as" + str(mac_port[packet.dst]))
 			#take action in conformity to each packet restriction
-			action = of.ofp_action_output(port = mac_port[packet.dst][0])
+			if mac_port[packet.dst][1]== 2:
+				action = of.ofp_action_output(port = mac_port[packet.dst][0])
 		else:
 			action = of.ofp_action_output(port = of.OFPP_ALL)
 		msg.actions.append(action)
