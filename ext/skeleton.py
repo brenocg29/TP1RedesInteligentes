@@ -38,7 +38,6 @@ from pox.lib.addresses import EthAddr, IPAddr # Address types
 import pox.lib.util as poxutil                # Various util functions
 import pox.lib.revent as revent               # Event library
 import pox.lib.recoco as recoco               # Multitasking library
-
 # Create a logger for this component
 log = core.getLogger()
 mac_port = {}
@@ -54,6 +53,8 @@ def _start_ev(event):
 	log.info("ola comecei carai")
 def packet_in(event):
 	packet = event.parse()
+	if str(packet.src) in restrict_mac:
+		log.info("thus is " + restrict_mac[str(packet.src)])
 	log.info(event.port)
 	msg = of.ofp_packet_out()
 	msg.data = event.ofp	
@@ -64,35 +65,40 @@ def packet_in(event):
 			if packet.src in restrict_mac:
 				#TODO take action
 				log.info("learning" + str(packet.src) +"is in port" + str(event.ofp.in_port))
-				mac_port[packet.src] = (event.ofp.in_port,restrict_mac[packet.src])
+				mac_port[packet.src] = (event.ofp.in_port)
 			if packet.src not in restrict_mac:
-				mac_port[packet.src] = (event.ofp.in_port,Restrict.FORWARD)
-
-			
+				mac_port[packet.src] = (event.ofp.in_port)
 
 		if packet.dst in mac_port:
 			log.info("send to " + str(packet.dst) + "known as" + str(mac_port[packet.dst]))
 			#take action in conformity to each packet restriction
-			if mac_port[packet.dst][1]== 2:
-				action = of.ofp_action_output(port = mac_port[packet.dst][0])
-			if mac_port[packet.dst][1] == 1:
+			if str(packet.src) not in restrict_mac or restrict_mac[str(packet.src)]== "2" :
+				action = of.ofp_action_output(port = mac_port[packet.dst])
+				msg.actions.append(action)
+				event.connection.send(msg)
+			if str(packet.src) in restrict_mac and restrict_mac[str(packet.src)] == "1":
 				log.info("Dropped")
-			if mac_port[packet.dts][1] == 4:
+				return 
+			if str(packet.src) in restrict_mac and restrict_mac[str(packet.src)] == "4":
 				action = of.ofp_action_output(port = admin_port)
-			
+				msg.actions.append(action)
+				action = of.ofp_action_output(port = mac_port[packet.dst])
+				msg.actions.append(action)
+				event.connection.send(msg)
 
 		else:
 			action = of.ofp_action_output(port = of.OFPP_ALL)
-		msg.actions.append(action)
-		event.connection.send(msg)
+			msg.actions.append(action)
+			event.connection.send(msg)
 
 
 def launch (bar = False):
-	#restriction_num = raw_input("entre com o num de restricoes")
-	#for i in range(0,int(restriction_num)):
-		#mac_port = raw_input("Entre com o macport")
-		#restriction = raw_input("entre com o numero da restricao para esse mac")
-		#restrict_mac[mac_port] = restriction
-		core.openflow.addListenerByName("ConnectionUp",_start_ev)
-		core.openflow.addListenerByName("PacketIn",packet_in)
+	restriction_num = raw_input("entre com o num de restricoes")
+	for i in range(0,int(restriction_num)):
+		mac_port = raw_input("Entre com o macport")
+		restriction = raw_input("entre com o numero da restricao para esse mac")
+		restrict_mac[str(mac_port)] = restriction
+	print restrict_mac["00:00:00:00:00:02"]
+	core.openflow.addListenerByName("ConnectionUp",_start_ev)
+	core.openflow.addListenerByName("PacketIn",packet_in)
   	
