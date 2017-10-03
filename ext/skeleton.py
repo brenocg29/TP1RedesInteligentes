@@ -98,7 +98,6 @@ def launch (bar = False):
 		mac_port = raw_input("Entre com o macport")
 		restriction = raw_input("entre com o numero da restricao para esse mac")
 		restrict_mac[str(mac_port)] = restriction
-	print restrict_mac["00:00:00:00:00:02"]
 	core.openflow.addListenerByName("ConnectionUp",_start_ev)
 	core.openflow.addListenerByName("PacketIn",packet_in)
   	
