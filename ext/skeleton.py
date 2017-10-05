@@ -41,57 +41,71 @@ import pox.lib.recoco as recoco               # Multitasking library
 # Create a logger for this component
 log = core.getLogger()
 mac_port = {}
-admin_port = 0 #change this
+admin_port = 3 #change this
 restrict_mac = {}
+restrict_dst = {}
 class Restrict(Enum):
 	DROP = 1
 	FORWARD = 2
 	FORANDTRACK = 3
 	DUPLICATE = 4
 	BLOCKANDREPORT = 5
+class hostType(Enum):
+	SUPERUSER = 1
+	DONTFORWARD = 2
+	NOTPORN = 3
+	DROPALL = 4
+	ALWAYSDUPLICATE = 5
 def _start_ev(event):
 	log.info("ola comecei carai")
 def packet_in(event):
+	flag = 0
 	packet = event.parse()
 	if str(packet.src) in restrict_mac:
 		log.info("thus is " + restrict_mac[str(packet.src)])
 	log.info(event.port)
 	msg = of.ofp_packet_out()
-	msg.data = event.ofp	
-	if event.port == 3:
-		log.info("dropped")
-	else:
-		if packet.src not in mac_port:
-			if packet.src in restrict_mac:
-				#TODO take action
-				log.info("learning" + str(packet.src) +"is in port" + str(event.ofp.in_port))
-				mac_port[packet.src] = (event.ofp.in_port)
-			if packet.src not in restrict_mac:
-				mac_port[packet.src] = (event.ofp.in_port)
-
-		if packet.dst in mac_port:
-			log.info("send to " + str(packet.dst) + "known as" + str(mac_port[packet.dst]))
-			#take action in conformity to each packet restriction
-			if str(packet.src) not in restrict_mac or restrict_mac[str(packet.src)]== "2" :
+	msg.data = event.ofp
+	msg.idle_timeout = 10
+	msg.hard_timeout = 30	
+	if packet.src not in mac_port:
+		if packet.src in restrict_mac:
+			log.info("learning" + str(packet.src) +"is in port" + str(event.ofp.in_port))
+			mac_port[packet.src] = (event.ofp.in_port)
+		if packet.src not in restrict_mac:
+			mac_port[packet.src] = (event.ofp.in_port)
+	if packet.dst in mac_port:
+		log.info("send to " + str(packet.dst) + "known as" + str(mac_port[packet.dst]))
+		if str(packet.src) not in restrict_mac or restrict_mac[str(packet.src)]== "2" :
+			if str(packet.src) not in restrict_dst or restrict_dst[str(packet.dst)] != "5":
 				action = of.ofp_action_output(port = mac_port[packet.dst])
 				msg.actions.append(action)
 				event.connection.send(msg)
-			if str(packet.src) in restrict_mac and restrict_mac[str(packet.src)] == "1":
+		if str(packet.src) in restrict_mac and restrict_mac[str(packet.src)] == "1":
+			if str(packet.dst) in restrict_dst and restrict_dst[str(packet.dst)]!= "1":
 				log.info("Dropped")
-				return 
-			if str(packet.src) in restrict_mac and restrict_mac[str(packet.src)] == "4":
-				action = of.ofp_action_output(port = admin_port)
-				msg.actions.append(action)
+			else:
 				action = of.ofp_action_output(port = mac_port[packet.dst])
 				msg.actions.append(action)
-				event.connection.send(msg)
-
-		else:
-			action = of.ofp_action_output(port = of.OFPP_ALL)
+				event.connection.send(msg)		
+			return 
+		if str(packet.src) in restrict_mac and restrict_mac[str(packet.src)] == "3":
+			action = of.ofp_action_output(port = mac_port[packet.dst])
+			msg.actions.append(action)
+			restrict_dst[packet.dst] = 1
+		if str(packet.src) in restrict_mac and restrict_mac[str(packet.src)] == "4":
+			action = of.ofp_action_output(port = admin_port)
+			msg.actions.append(action)
+			action = of.ofp_action_output(port = mac_port[packet.dst])
 			msg.actions.append(action)
 			event.connection.send(msg)
-
-
+		if str(packet.src) in restrict_mac and restrict_mac[str(packet.src)] == "5":
+			action = of.ofp_action_output(port = admin_port)
+			msg.actions.append(action)
+	else:
+		action = of.ofp_action_output(port = of.OFPP_ALL)
+		msg.actions.append(action)
+		event.connection.send(msg)
 def launch (bar = False):
 	restriction_num = raw_input("entre com o num de restricoes")
 	for i in range(0,int(restriction_num)):
