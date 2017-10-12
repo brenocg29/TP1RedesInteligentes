@@ -12,23 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-A skeleton POX component
-
-You can customize this to do whatever you like.  Don't forget to
-adjust the Copyright above, and to delete the Apache license if you
-don't want to release under Apache (but consider doing so!).
-
-Rename this file to whatever you like, .e.g., mycomponent.py.  You can
-then invoke it with "./pox.py mycomponent" if you leave it in the
-ext/ directory.
-
-Implement a launch() function (as shown below) which accepts commandline
-arguments and starts off your component (e.g., by listening to events).
-
-Edit this docstring and your launch function's docstring.  These will
-show up when used with the help component ("./pox.py help --mycomponent").
-"""
 from enum import Enum
 # Import some POX stuff
 from pox.core import core                     # Main POX object
@@ -52,10 +35,8 @@ class Restrict(Enum):
 	BLOCKANDREPORT = 5
 class hostType(Enum):
 	SUPERUSER = 1
-	DONTFORWARD = 2
-	NOTPORN = 3
-	DROPALL = 4
-	ALWAYSDUPLICATE = 5
+	DROPALL = 2
+	ALWAYSDUPLICATE = 3
 def _start_ev(event):
 	log.info("ola comecei carai")
 def packet_in(event):
@@ -70,7 +51,7 @@ def packet_in(event):
 	msg.hard_timeout = 30
 	if str(packet.dst) in restrict_dst and restrict_dst[str(packet.dst)] == 4:
 		log.info("dropped")
-		return	
+		return
 	if packet.src not in mac_port:
 		if packet.src in restrict_mac:
 			log.info("learning" + str(packet.src) +"is in port" + str(event.ofp.in_port))
@@ -78,14 +59,17 @@ def packet_in(event):
 		if packet.src not in restrict_mac:
 			mac_port[packet.src] = (event.ofp.in_port)
 	if packet.dst in mac_port:
-		log.info("send to " + str(packet.dst) + "known as" + str(mac_port[packet.dst]))
-		if str(packet.src) not in restrict_mac or restrict_mac[str(packet.src)]== "2" :
-			if str(packet.src) not in restrict_dst or restrict_dst[str(packet.dst)] != "5":
-				action = of.ofp_action_output(port = admin_port)
+		log.info("send to " + str(packet.dst) + "known as " + str(mac_port[packet.dst]))
+		if str(packet.src) not in restrict_mac or restrict_mac[str(packet.src)] == "2" :
+			if str(packet.dst) in restrict_dst and restrict_dst[str(packet.dst)] == "2":
+				print "Dropped"
+			else:
+				action = of.ofp_action_output(port = mac_port[packet.dst])
 				msg.actions.append(action)
-			action = of.ofp_action_output(port = mac_port[packet.dst])
-			msg.actions.append(action)
-			event.connection.send(msg)
+				if str(packet.dst) in restrict_dst and restrict_dst[str(packet.dst)] == "5":
+					action = of.ofp_action_output(port = admin_port)
+					msg.actions.append(action)
+				event.connection.send(msg)
 		if str(packet.src) in restrict_mac and restrict_mac[str(packet.src)] == "1":
 			if str(packet.dst) in restrict_dst and restrict_dst[str(packet.dst)]== "1":
 				action = of.ofp_action_output(port = mac_port[packet.dst])
@@ -95,16 +79,23 @@ def packet_in(event):
 				log.info("Dropped")
 			return 
 		if str(packet.src) in restrict_mac and restrict_mac[str(packet.src)] == "3":
-			action = of.ofp_action_output(port = mac_port[packet.dst])
-			msg.actions.append(action)
-			event.connection.send(msg)
-			restrict_dst[packet.dst] = 1
+			if str(packet.dst) in restrict_dst and restrict_dst[str(packet.dst)] == "2":
+				print "Dropped"
+			else:
+				action = of.ofp_action_output(port = mac_port[packet.dst])
+				msg.actions.append(action)
+				event.connection.send(msg)
+				if str(packet.dst) not in restrict_dst or restrict_dst[str(packet.dst)] != "1"
+					restrict_dst[packet.dst] = "3"
 		if str(packet.src) in restrict_mac and restrict_mac[str(packet.src)] == "4":
-			action = of.ofp_action_output(port = admin_port)
-			msg.actions.append(action)
-			action = of.ofp_action_output(port = mac_port[packet.dst])
-			msg.actions.append(action)
-			event.connection.send(msg)
+			if str(packet.dst) in restrict_dst and restrict_dst[str(packet.dst)] == "2":
+				print "Dropped"
+			else:
+				action = of.ofp_action_output(port = admin_port)
+				msg.actions.append(action)
+				action = of.ofp_action_output(port = mac_port[packet.dst])
+				msg.actions.append(action)
+				event.connection.send(msg)
 		if str(packet.src) in restrict_mac and restrict_mac[str(packet.src)] == "5":
 			action = of.ofp_action_output(port = admin_port)
 			msg.actions.append(action)
