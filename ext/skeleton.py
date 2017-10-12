@@ -42,8 +42,10 @@ def _start_ev(event):
 def packet_in(event):
 	flag = 0
 	packet = event.parse()
+	if str(packet.dst) in restrict_dst:
+		log.info("thisssss isssssssssssssssss " + restrict_dst[str(packet.dst)])
 	if str(packet.src) in restrict_mac:
-		log.info("thus is " + restrict_mac[str(packet.src)])
+		log.info("this is " + restrict_mac[str(packet.src)])
 	log.info(event.port)
 	msg = of.ofp_packet_out()
 	msg.data = event.ofp
@@ -116,11 +118,12 @@ def launch (bar = False):
 		mac_port = raw_input("Entre com o macport")
 		restriction = raw_input("entre com o numero da restricao para esse mac")
 		restrict_mac[str(mac_port)] = restriction
-	restrict_dst = raw_input("entre com o num de permissoes")
-	for j in range(0,int(restrict_dst)):
+	restriction_num  = raw_input("entre com o num de permissoes")
+	for j in range(0,int(restriction_num)):
 		mac_port = raw_input("entre com o mac port")
 		restriction = raw_input("entre com o numero de permissao")
-		restrict_dst[restrict_mac] = restriction
+		restrict_dst[str(mac_port)] = restriction
+		print "olz"
 	core.openflow.addListenerByName("ConnectionUp",_start_ev)
 	core.openflow.addListenerByName("PacketIn",packet_in)
   	
