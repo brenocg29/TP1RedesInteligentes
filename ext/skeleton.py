@@ -66,7 +66,7 @@ def packet_in(event):
 			else:
 				action = of.ofp_action_output(port = mac_port[packet.dst])
 				msg.actions.append(action)
-				if str(packet.dst) in restrict_dst and restrict_dst[str(packet.dst)] == "5":
+				if str(packet.dst) in restrict_dst and restrict_dst[str(packet.dst)] == "3":
 					action = of.ofp_action_output(port = admin_port)
 					msg.actions.append(action)
 				event.connection.send(msg)
@@ -91,15 +91,21 @@ def packet_in(event):
 			if str(packet.dst) in restrict_dst and restrict_dst[str(packet.dst)] == "2":
 				print "Dropped"
 			else:
-				action = of.ofp_action_output(port = admin_port)
-				msg.actions.append(action)
+				if str(packet.dst) not in restrict_dst or restrict_dst[str(packet.dst)] != "1":
+					action = of.ofp_action_output(port = admin_port)
+					msg.actions.append(action)
 				action = of.ofp_action_output(port = mac_port[packet.dst])
 				msg.actions.append(action)
 				event.connection.send(msg)
 		if str(packet.src) in restrict_mac and restrict_mac[str(packet.src)] == "5":
-			action = of.ofp_action_output(port = admin_port)
-			msg.actions.append(action)
-			event.connection.send(msg)
+			if str(packet.dst) in restrict_dst and restrict_dst[str(packet.dst)] == "1":
+				action = of.ofp_action_output(port = mac_port[packet.dst])
+				msg.actions.append(action)
+				event.connection.send(msg)
+			else:
+				action = of.ofp_action_output(port = admin_port)
+				msg.actions.append(action)
+				event.connection.send(msg)
 	else:
 		action = of.ofp_action_output(port = of.OFPP_ALL)
 		msg.actions.append(action)
