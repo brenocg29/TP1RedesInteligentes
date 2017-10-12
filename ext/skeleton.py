@@ -58,7 +58,7 @@ def packet_in(event):
 	else:
 		source = str(packet.src)
 		destiny = str(packet.dst)
-	if destiny in restrict_dst and restrict_dst[destiny] == 4:
+	if destiny in restrict_dst and restrict_dst[destiny] == 2:
 		log.info("dropped")
 		return
 	if packet.src not in mac_port:
