@@ -85,7 +85,7 @@ def packet_in(event):
 				action = of.ofp_action_output(port = mac_port[packet.dst])
 				msg.actions.append(action)
 				event.connection.send(msg)
-				if str(packet.dst) not in restrict_dst or restrict_dst[str(packet.dst)] != "1"
+				if str(packet.dst) not in restrict_dst or restrict_dst[str(packet.dst)] != "1":
 					restrict_dst[packet.dst] = "3"
 		if str(packet.src) in restrict_mac and restrict_mac[str(packet.src)] == "4":
 			if str(packet.dst) in restrict_dst and restrict_dst[str(packet.dst)] == "2":
@@ -116,6 +116,11 @@ def launch (bar = False):
 		mac_port = raw_input("Entre com o macport")
 		restriction = raw_input("entre com o numero da restricao para esse mac")
 		restrict_mac[str(mac_port)] = restriction
+	restrict_dst = raw_input("entre com o num de permissoes")
+	for j in range(0,int(restrict_dst)):
+		mac_port = raw_input("entre com o mac port")
+		restriction = raw_input("entre com o numero de permissao")
+		restrict_dst[restrict_mac] = restriction
 	core.openflow.addListenerByName("ConnectionUp",_start_ev)
 	core.openflow.addListenerByName("PacketIn",packet_in)
   	
