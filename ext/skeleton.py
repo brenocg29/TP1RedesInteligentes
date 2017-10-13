@@ -42,17 +42,14 @@ def _start_ev(event):
 def packet_in(event):
 	flag = 0
 	packet = event.parse()
-	if str(packet.dst) in restrict_dst:
-		log.info("thisssss isssssssssssssssss " + restrict_dst[str(packet.dst)])
-	if str(packet.src) in restrict_mac:
-		log.info("this is " + restrict_mac[str(packet.src)])
 	log.info(event.port)
 	msg = of.ofp_packet_out()
 	msg.data = event.ofp
 	source = ""
 	msg.idle_timeout = 10
 	msg.hard_timeout = 30
-	if packet.find(pkt.ipv4) != None:
+	mode = "1"
+	if packet.find(pkt.ipv4) != None and mode == "1" :
 		source = str(packet.next.srcip)
 		destiny = str(packet.next.dstip)
 	else:
@@ -118,6 +115,7 @@ def packet_in(event):
 			msg.actions.append(action)
 			event.connection.send(msg)
 def launch (bar = False):
+	mode = raw_input("entre com o modo (1) Ip address se possivel (2) para endrecos MAC")
 	restriction_num = raw_input("entre com o num de restricoes")
 	for i in range(0,int(restriction_num)):
 		mac_port = raw_input("Entre com o macport")
@@ -131,4 +129,3 @@ def launch (bar = False):
 		print "olz"
 	core.openflow.addListenerByName("ConnectionUp",_start_ev)
 	core.openflow.addListenerByName("PacketIn",packet_in)
-  	
