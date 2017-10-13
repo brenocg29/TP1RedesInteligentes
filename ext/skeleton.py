@@ -58,9 +58,6 @@ def packet_in(event):
 	else:
 		source = str(packet.src)
 		destiny = str(packet.dst)
-	if destiny in restrict_dst and restrict_dst[destiny] == 2:
-		log.info("dropped")
-		return
 	if packet.src not in mac_port:
 		if packet.src in restrict_mac:
 			log.info("learning" + str(packet.src) +"is in port" + str(event.ofp.in_port))
@@ -116,9 +113,10 @@ def packet_in(event):
 				msg.actions.append(action)
 				event.connection.send(msg)
 	else:
-		action = of.ofp_action_output(port = of.OFPP_ALL)
-		msg.actions.append(action)
-		event.connection.send(msg)
+		if (source != "1"):
+			action = of.ofp_action_output(port = of.OFPP_ALL)
+			msg.actions.append(action)
+			event.connection.send(msg)
 def launch (bar = False):
 	restriction_num = raw_input("entre com o num de restricoes")
 	for i in range(0,int(restriction_num)):
