@@ -1,0 +1,25 @@
+{
+  "name": "nsdna",
+  "version": "1.0.0",
+  "description": "A network controller dedicated to monitor and filter content circulating in an SDN network.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "SDN",
+    "controller",
+    "filter",
+    "package",
+    "firewall",
+    "block",
+    "monitor"
+  ],
+  "author": "Breno Gabrich, Eugenio Pacceli, Jackson de Farias",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.15.4",
+    "python-shell": "^0.4.0"
+  }
+}

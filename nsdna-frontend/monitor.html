@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>NSSDNA</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="static/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="static/css/dashboard.css" rel="stylesheet">
+    <link href="static/css/ionicons.min.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div id="navLoad"></div>
+
+    <div class="container-fluid">
+      <div class="row">
+        <main class="col-sm-12 ml-sm-auto col-md-12 pt-3" role="main">
+          <div class="card">
+              <div class="card-header">
+                Saída do terminal Python
+              </div>
+              <div class="card-body">
+                <h4 class="card-title">Ocorrências</h4>
+                <pre class="code-text"><code id="codeOutput"></code></pre>
+              </div>
+            </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="static/js/jquery.min.js"></script>
+    <!-- <script src="static/js/vendor/popper.min.js"></script> -->
+    <script src="static/js/bootstrap.min.js"></script>
+    <script>
+      $("#navLoad").load("/navbar", function(){
+        $("#navbar-list #nv4").addClass("active");
+      });
+    </script>
+  </body>
+</html>
