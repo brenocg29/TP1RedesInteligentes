@@ -13,8 +13,11 @@
 # limitations under the License.
 
 from enum import Enum
+from pox.openflow.of_json import *
+
 # Import some POX stuff
-from pox.core import core                     # Main POX object
+from pox.core import core
+from pox.lib.util import dpidToStr, strToDPID, fields_of                   
 import pox.openflow.libopenflow_01 as of      # OpenFlow 1.0 library
 import pox.lib.packet as pkt                  # Packet parsing/construction
 from pox.lib.addresses import EthAddr, IPAddr # Address types
@@ -26,6 +29,7 @@ log = core.getLogger()
 mac_port = {}
 admin_port = 3 #change this
 restrict_mac = {}
+switches = []
 restrict_dst = {}
 class Restrict(Enum):
 	DROP = 1
@@ -38,7 +42,14 @@ class hostType(Enum):
 	DROPALL = 2
 	ALWAYSDUPLICATE = 3
 def _start_ev(event):
-	log.info("ola comecei carai")
+	connection = event.connection
+	sock = connection.sock
+	ip,port = sock.getpeername()
+	print dpidToStr(event.dpid ) + "and ip is " + ip
+	file = open('switches.txt','w')
+	switches.append(str(ip))
+	file.write("\n".join(switches))
+	file.close
 def packet_in(event):
 	flag = 0
 	packet = event.parse()
