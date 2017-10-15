@@ -92,7 +92,7 @@ def packet_in(event):
 					restrict_dst[packet.dst] = "3"
 		if source in restrict_mac and restrict_mac[source] == "4":
 			if destiny in restrict_dst and restrict_dst[destiny] == "2":
-				log.info ("Dropped from " + source + "to" + destiny)
+				log.info ("Dropped from " + source + "to " + destiny)
 			else:
 				if destiny not in restrict_dst or restrict_dst[destiny] != "1":
 					action = of.ofp_action_output(port = admin_port)
