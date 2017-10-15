@@ -65,7 +65,7 @@ def packet_in(event):
 		log.info("send to " + destiny + "known as " + str(mac_port[packet.dst]))
 		if source not in restrict_mac or restrict_mac[source] == "2" :
 			if destiny in restrict_dst and restrict_dst[destiny] == "2":
-				print "Dropped"
+				log.info ("Dropped from " + source + "to " + destiny)
 			else:
 				action = of.ofp_action_output(port = mac_port[packet.dst])
 				msg.actions.append(action)
@@ -79,11 +79,11 @@ def packet_in(event):
 				msg.actions.append(action)
 				event.connection.send(msg)
 			else:
-				log.info("Dropped")
+				log.info("Dropped from " + source + "to " + destiny)
 			return 
 		if source in restrict_mac and restrict_mac[source] == "3":
 			if destiny in restrict_dst and restrict_dst[destiny] == "2":
-				print "Dropped"
+				log.info ("Dropped from " + source +"to " + destiny)
 			else:
 				action = of.ofp_action_output(port = mac_port[packet.dst])
 				msg.actions.append(action)
@@ -92,7 +92,7 @@ def packet_in(event):
 					restrict_dst[packet.dst] = "3"
 		if source in restrict_mac and restrict_mac[source] == "4":
 			if destiny in restrict_dst and restrict_dst[destiny] == "2":
-				print "Dropped"
+				log.info ("Dropped from " + source + "to" + destiny)
 			else:
 				if destiny not in restrict_dst or restrict_dst[destiny] != "1":
 					action = of.ofp_action_output(port = admin_port)
