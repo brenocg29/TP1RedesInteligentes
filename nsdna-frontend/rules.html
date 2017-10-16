@@ -22,7 +22,51 @@
     <div class="container-fluid">
       <div class="row">
         <main class="col-sm-12 ml-sm-auto col-md-12 pt-3" role="main">
-          <h1>Balanço Geral</h1>
+          <div class="card">
+            <div class="card-header">
+                Configuração de regras
+            </div>
+            <div class="card-body">
+              <h4 class="card-title">Controle</h4>
+              <form action="/set/rules" method="POST">
+                <div class="row">
+                    <div class="col-3">
+                    <div class="form-check">
+                      <label class="form-check-label">
+                        <input id="ads" type="checkbox" class="form-check-input" name="ads">
+                        Bloquear anúncios
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <label class="form-check-label">
+                        <input id="malware" type="checkbox" class="form-check-input" name="malware">
+                        Bloquear adwares, malwares e redirects
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <label class="form-check-label">
+                        <input id="porn" type="checkbox" class="form-check-input" name="porn">
+                        Bloquear pornografia
+                      </label>
+                    </div>
+                    <div class="form-check">
+                        <label class="form-check-label">
+                          <input id="custom" type="checkbox" class="form-check-input" name="custom">
+                          Aplicar regras adicionais
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-9">
+                      <div class="form-group">
+                        <label for="exampleTextarea">Regras adicinais de bloqueio (um IP/domínio por linha)</label>
+                        <textarea class="form-control" rows="10" id="add" name="add"></textarea>
+                      </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary" name="sbm">Configurar</button>
+                </div>
+              </form>
+            </div>
+          </div>
           <h2 id="rules">Regras vigentes</h2>
           <div class="table-responsive">
             <table class="table table-striped">
@@ -30,40 +74,13 @@
                 <tr>
                   <th># (Id)</th>
                   <th>Descrição</th>
-                  <th>Tipo</th>
-                  <th>Afeta</th>
-                  <th>Sintaxe POX</th>
-                  <th>Configurar</th>
+                  <th>Localização</th>
                 </tr>
               </thead>
               <tbody id="rulesTable">
-                <!--<tr>
-                  <td>1,001</td>
-                  <td>Lorem</td>
-                  <td>ipsum</td>
-                  <td>dolor</td>
-                  <td>sit</td>
-                  <td>
-                    <a href="#" class="btn btn-primary btn-md">
-                        <span class="step size-24">
-                          <i class="icon ion-gear-a"></i>
-                        </span>
-                    </a>
-                  </td>
-                </tr>-->
               </tbody>
             </table>
           </div>
-          <hr/>
-          <div class="card">
-              <div class="card-header">
-                Saída do terminal Python
-              </div>
-              <div class="card-body">
-                <h4 class="card-title">Status das regras</h4>
-                <pre class="code-text"><code id="codeOutput"></code></pre>
-              </div>
-            </div>
         </main>
       </div>
     </div>
@@ -77,6 +94,17 @@
     <script>
       $("#navLoad").load("/navbar", function(){
         $("#navbar-list #nv1").addClass("active");
+      });
+
+      $.getJSON( "/get/rules", function(data) {
+        data.forEach(function(obj,index){
+          $("#rulesTable").append("<tr><td>" + index + "</td><td>" + obj.desc + "</td><td>" + obj.addr + "</td></tr>");
+          $("#"+obj.syn).prop('checked', true);
+        });
+      });
+
+      $.get( "/get/custom", function(data) {
+        $("#add").val(data);
       });
     </script>
   </body>

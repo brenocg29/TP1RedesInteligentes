@@ -22,48 +22,20 @@
     <div class="container-fluid">
       <div class="row">
         <main class="col-sm-12 ml-sm-auto col-md-12 pt-3" role="main">
-          <h1>Balanço Geral</h1>
           <h2 id="switches">Switches</h2>
           <div class="table-responsive">
             <table class="table table-striped">
               <thead>
                 <tr>
                   <th># (Id)</th>
-                  <th>Nome</th>
                   <th>IP</th>
-                  <th>Mac</th>
-                  <th>Descrição</th>
-                  <th>Configurar</th>
                 </tr>
               </thead>
               <tbody id="switchesTable">
-                <!--<tr>
-                  <td>1,001</td>
-                  <td>Lorem</td>
-                  <td>10.0.0.1</td>
-                  <td>00:00:00:00:00:00</td>
-                  <td>sit</td>
-                  <td>
-                    <a href="#" class="btn btn-primary btn-md">
-                        <span class="step size-24">
-                          <i class="icon ion-gear-a"></i>
-                        </span>
-                    </a>
-                  </td>
-                </tr>-->
               </tbody>
             </table>
           </div>
           <hr/>
-          <div class="card">
-              <div class="card-header">
-                Saída do terminal Python
-              </div>
-              <div class="card-body">
-                <h4 class="card-title">Status das regras</h4>
-                <pre class="code-text"><code id="codeOutput"></code></pre>
-              </div>
-            </div>
         </main>
       </div>
     </div>
@@ -77,6 +49,12 @@
     <script>
       $("#navLoad").load("/navbar", function(){
         $("#navbar-list #nv3").addClass("active");
+      });
+
+      $.getJSON( "/get/switches", function(data) {
+        data.forEach(function(line,index){
+          $("#switchesTable").append("<tr><td>" + index + "</td><td>" + line + "</td></tr>");
+        });
       });
     </script>
   </body>

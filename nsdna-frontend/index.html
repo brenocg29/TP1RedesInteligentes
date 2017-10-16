@@ -21,25 +21,19 @@
 
     <div class="container-fluid">
       <div class="row">
-        <nav class="col-sm-3 col-md-2 d-none d-sm-block bg-light sidebar">
-          <ul class="nav nav-pills flex-column">
-            <li class="nav-item">
-              <a class="nav-link" href="#">Balanço Geral <span class="sr-only"></span></a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" id="rulesNav" href="#rules">Regras vigentes</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" id="usersNav" href="#users">Usuários</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" id="switchesNav" href="#switches">Switches</a>
-            </li>
-          </ul>
-        </nav>
+        <div class="col-sm-2 col-md-1 d-none d-sm-block">
+        </div>
 
-        <main class="col-sm-9 ml-sm-auto col-md-10 pt-3" role="main">
+        <main class="col-sm-8 ml-sm-auto col-md-10 pt-3" role="main">
           <h1>Balanço Geral</h1>
+          <div class="card">
+            <h4 class="card-header">Serviço</h4>
+            <div class="card-body">
+              <h4 class="card-title">Aplicar configurações e reiniciar/ligar o serviço</h4>
+              <p class="card-text">Reincia o script POX com as configurações aplicadas nessa sessão.</p>
+              <a href="#" id="restartBtn" class="btn btn-primary">Reiniciar/Ligar serviço</a>
+            </div>
+          </div>
           <h2 id="rules">Regras vigentes</h2>
           <div class="table-responsive">
             <table class="table table-striped">
@@ -47,59 +41,10 @@
                 <tr>
                   <th># (Id)</th>
                   <th>Descrição</th>
-                  <th>Tipo</th>
-                  <th>Afeta</th>
-                  <th>Sintaxe POX</th>
-                  <th>Configurar</th>
+                  <th>Localização</th>
                 </tr>
               </thead>
               <tbody id="rulesTable">
-                <!--<tr>
-                  <td>1,001</td>
-                  <td>Lorem</td>
-                  <td>ipsum</td>
-                  <td>dolor</td>
-                  <td>sit</td>
-                  <td>
-                    <a href="#" class="btn btn-primary btn-md">
-                        <span class="step size-24">
-                          <i class="icon ion-gear-a"></i>
-                        </span>
-                    </a>
-                  </td>
-                </tr>-->
-              </tbody>
-            </table>
-          </div>
-          <hr/>
-          <h2 id="users">Usuários</h2>
-          <div class="table-responsive">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th># (Id)</th>
-                  <th>Nome</th>
-                  <th>IP</th>
-                  <th>Mac</th>
-                  <th>Descrição</th>
-                  <th>Configurar</th>
-                </tr>
-              </thead>
-              <tbody id="usersTable">
-                <!--<tr>
-                  <td>1,001</td>
-                  <td>Lorem</td>
-                  <td>10.0.0.1</td>
-                  <td>00:00:00:00:00:00</td>
-                  <td>sit</td>
-                  <td>
-                    <a href="#" class="btn btn-primary btn-md">
-                        <span class="step size-24">
-                          <i class="icon ion-gear-a"></i>
-                        </span>
-                    </a>
-                  </td>
-                </tr>-->
               </tbody>
             </table>
           </div>
@@ -110,32 +55,17 @@
               <thead>
                 <tr>
                   <th># (Id)</th>
-                  <th>Nome</th>
                   <th>IP</th>
-                  <th>Mac</th>
-                  <th>Descrição</th>
-                  <th>Configurar</th>
                 </tr>
               </thead>
               <tbody id="switchesTable">
-                <!--<tr>
-                  <td>1,001</td>
-                  <td>Lorem</td>
-                  <td>10.0.0.1</td>
-                  <td>00:00:00:00:00:00</td>
-                  <td>sit</td>
-                  <td>
-                    <a href="#" class="btn btn-primary btn-md">
-                        <span class="step size-24">
-                          <i class="icon ion-gear-a"></i>
-                        </span>
-                    </a>
-                  </td>
-                </tr>-->
               </tbody>
             </table>
           </div>
         </main>
+
+        <div class="col-sm-2 col-md-1 d-none d-sm-block">
+        </div>
       </div>
     </div>
 
@@ -146,20 +76,26 @@
     <!-- <script src="static/js/vendor/popper.min.js"></script> -->
     <script src="static/js/bootstrap.min.js"></script>
     <script>
-      function setNavActive(i){
-        $("#rulesNav").removeClass("active");
-        $("#usersNav").removeClass("active");
-        $("#switchesNav").removeClass("active");
-        i.addClass("active");
-      }
-
-      $("#rulesNav,#usersNav,#switchesNav").click(function(e){
-          setNavActive($("#"+e.target.id));
-        }
-      );
-
       $("#navLoad").load("/navbar", function(){
         $("#navbar-list #nv0").addClass("active");
+      });
+
+      $("#restartBtn").click(function(){
+        $.get( "/server/restart", function( data ) {
+          window.location.href = '/monitor';
+        });
+      });
+
+      $.getJSON( "/get/switches", function(data) {
+        data.forEach(function(line,index){
+          $("#switchesTable").append("<tr><td>" + index + "</td><td>" + line + "</td></tr>");
+        });
+      });
+
+      $.getJSON( "/get/rules", function(data) {
+        data.forEach(function(obj,index){
+          $("#rulesTable").append("<tr><td>" + index + "</td><td>" + obj.desc + "</td><td>" + obj.addr + "</td></tr>");
+        });
       });
     </script>
   </body>

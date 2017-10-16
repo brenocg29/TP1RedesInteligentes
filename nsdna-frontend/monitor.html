@@ -27,7 +27,8 @@
                 Saída do terminal Python
               </div>
               <div class="card-body">
-                <h4 class="card-title">Ocorrências</h4>
+                <h4 class="card-title">Ocorrências <a href="/monitor" style="float: right;" class="btn btn-primary">Atualizar</a></h4>
+                <hr/>
                 <pre class="code-text"><code id="codeOutput"></code></pre>
               </div>
             </div>
@@ -44,6 +45,12 @@
     <script>
       $("#navLoad").load("/navbar", function(){
         $("#navbar-list #nv4").addClass("active");
+      });
+
+      $.getJSON( "/get/stdout", function(data) {
+        data.forEach(function(line){
+          $("#codeOutput").append(line);
+        });
       });
     </script>
   </body>
