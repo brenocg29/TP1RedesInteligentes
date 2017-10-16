@@ -12,10 +12,10 @@ var currentSwitches = ['127.0.0.1'];
 
 var policies = [
   "null",
-  "Forward",
   "Drop",
+  "Forward",
+  "Forward and Track",
   "Duplicate",
-  "Forward and Follow",
   "Block and Report"
 ];
 
