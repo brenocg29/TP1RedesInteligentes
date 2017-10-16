@@ -110,7 +110,7 @@ app.post('/set/rules', function (req, res) {
   }
   fs.writeFileSync(possibleLists[3].addr, req.body.add);
   for(var item of currentLists){
-    currentRule = fs.readFileSync(item.addr, 'utf-8').replace(/\n/g," " + policies.indexOf(item.policy) + "\n");
+    currentRule = fs.readFileSync(item.addr, 'utf-8').replace(/\r\n?|\n/g," " + policies.indexOf(item.policy) + "\n");
     fullString += currentRule;
   }
   fs.writeFileSync("../rules.txt", fullString);
