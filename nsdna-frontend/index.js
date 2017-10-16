@@ -11,6 +11,7 @@ var currentLists = [];
 var currentSwitches = ['127.0.0.1'];
 
 var policies = [
+  "null",
   "Forward",
   "Drop",
   "Duplicate",
