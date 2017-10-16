@@ -42,6 +42,7 @@ class hostType(Enum):
 	DROPALL = 2
 	ALWAYSDUPLICATE = 3
 def _start_ev(event):
+	mode = "1"
 	connection = event.connection
 	sock = connection.sock
 	ip,port = sock.getpeername()
@@ -126,17 +127,22 @@ def packet_in(event):
 			msg.actions.append(action)
 			event.connection.send(msg)
 def launch (bar = False):
-	mode = raw_input("entre com o modo (1) Ip address se possivel (2) para endrecos MAC")
-	restriction_num = raw_input("entre com o num de restricoes")
-	for i in range(0,int(restriction_num)):
-		mac_port = raw_input("Entre com o macport")
-		restriction = raw_input("entre com o numero da restricao para esse mac")
-		restrict_mac[str(mac_port)] = restriction
-	restriction_num  = raw_input("entre com o num de permissoes")
-	for j in range(0,int(restriction_num)):
-		mac_port = raw_input("entre com o mac port")
-		restriction = raw_input("entre com o numero de permissao")
-		restrict_dst[str(mac_port)] = restriction
-		print "olz"
+	f = open ("./rules.txt")
+	for line in f:
+		aux = line.split();
+		ip,rest = aux[0],aux[1]
+		restrict_mac[ip] = rest
+	#mode = raw_input("entre com o modo (1) Ip address se possivel (2) para endrecos MAC")
+	#restriction_num = raw_input("entre com o num de restricoes ")
+	#for i in range(0,int(restriction_num)):
+	#	mac_port = raw_input("Entre com o macport ")
+	#	restriction = raw_input("entre com o numero da restricao para esse mac ")
+	#	restrict_mac[str(mac_port)] = restriction
+	#restriction_num  = raw_input("entre com o num de permissoes ")
+	#for j in range(0,int(restriction_num)):
+	#	mac_port = raw_input("entre com o mac port ")
+	#	restriction = raw_input("entre com o numero de permissao ")
+	#	restrict_dst[str(mac_port)] = restriction
+	#	print "olz"
 	core.openflow.addListenerByName("ConnectionUp",_start_ev)
 	core.openflow.addListenerByName("PacketIn",packet_in)
