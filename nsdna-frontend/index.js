@@ -131,9 +131,11 @@ app.get('/server/restart', function (req, res) {
   messagesFromPox.push('Starting Python module\n');
   session = new PythonShell('../pox.py',{args: [ "skeleton" ]});
   session.on('error', function (err) {
+    console.log(err.traceback);
     messagesFromPox.push(err.traceback);
   });
   session.on('message', function (message) {
+    console.log(message);
     messagesFromPox.push(message);
   });
   res.send('applied');
