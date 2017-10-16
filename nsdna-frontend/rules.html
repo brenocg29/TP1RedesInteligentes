@@ -37,11 +37,29 @@
                         Bloquear anúncios
                       </label>
                     </div>
+                    <div class="form-group">
+                      <select class="form-control" id="adsPolicy" name="adsPolicy">
+                        <option>Forward</option>
+                        <option>Drop</option>
+                        <option>Duplicate</option>
+                        <option>Forward and Follow</option>
+                        <option>Block and Report</option>
+                      </select>
+                    </div>
                     <div class="form-check">
                       <label class="form-check-label">
                         <input id="malware" type="checkbox" class="form-check-input" name="malware">
                         Bloquear adwares, malwares e redirects
                       </label>
+                    </div>
+                    <div class="form-group">
+                      <select class="form-control" id="malwarePolicy" name="malwarePolicy">
+                        <option>Forward</option>
+                        <option>Drop</option>
+                        <option>Duplicate</option>
+                        <option>Forward and Follow</option>
+                        <option>Block and Report</option>
+                      </select>
                     </div>
                     <div class="form-check">
                       <label class="form-check-label">
@@ -49,11 +67,29 @@
                         Bloquear pornografia
                       </label>
                     </div>
+                    <div class="form-group">
+                      <select class="form-control" id="pornPolicy" name="pornPolicy">
+                        <option>Forward</option>
+                        <option>Drop</option>
+                        <option>Duplicate</option>
+                        <option>Forward and Follow</option>
+                        <option>Block and Report</option>
+                      </select>
+                    </div>
                     <div class="form-check">
                         <label class="form-check-label">
                           <input id="custom" type="checkbox" class="form-check-input" name="custom">
                           Aplicar regras adicionais
                         </label>
+                      </div>
+                      <div class="form-group">
+                        <select class="form-control" id="customPolicy" name="customPolicy">
+                          <option>Forward</option>
+                          <option>Drop</option>
+                          <option>Duplicate</option>
+                          <option>Forward and Follow</option>
+                          <option>Block and Report</option>
+                        </select>
                       </div>
                     </div>
                     <div class="col-9">
@@ -73,6 +109,7 @@
               <thead>
                 <tr>
                   <th># (Id)</th>
+                  <th>Política</th>
                   <th>Descrição</th>
                   <th>Localização</th>
                 </tr>
@@ -98,7 +135,7 @@
 
       $.getJSON( "/get/rules", function(data) {
         data.forEach(function(obj,index){
-          $("#rulesTable").append("<tr><td>" + index + "</td><td>" + obj.desc + "</td><td>" + obj.addr + "</td></tr>");
+          $("#rulesTable").append("<tr><td>" + index + "</td><td>" + obj.policy + "</td><td>" + obj.desc + "</td><td>" + obj.addr + "</td></tr>");
           $("#"+obj.syn).prop('checked', true);
         });
       });

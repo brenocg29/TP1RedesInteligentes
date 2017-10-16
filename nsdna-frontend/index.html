@@ -40,6 +40,7 @@
               <thead>
                 <tr>
                   <th># (Id)</th>
+                  <th>Política</th>
                   <th>Descrição</th>
                   <th>Localização</th>
                 </tr>
@@ -94,7 +95,7 @@
 
       $.getJSON( "/get/rules", function(data) {
         data.forEach(function(obj,index){
-          $("#rulesTable").append("<tr><td>" + index + "</td><td>" + obj.desc + "</td><td>" + obj.addr + "</td></tr>");
+          $("#rulesTable").append("<tr><td>" + index + "</td><td>" + obj.policy + "</td><td>" + obj.desc + "</td><td>" + obj.addr + "</td></tr>");
         });
       });
     </script>

@@ -10,6 +10,14 @@ var messagesFromPox = [];
 var currentLists = [];
 var currentSwitches = ['127.0.0.1'];
 
+var policies = [
+  "Forward",
+  "Drop",
+  "Duplicate",
+  "Forward and Follow",
+  "Block and Report"
+];
+
 var possibleLists = [{
     desc : "Anúncios publicitários",
     addr : "lists/ads.txt",
@@ -83,22 +91,27 @@ app.get('/get/stdout', function (req, res) {
 app.post('/set/rules', function (req, res) {
   currentLists = [];
   var fullString = "";
+  var currentRule = "";
   if(req.body.ads == 'on'){
+    possibleLists[0].policy = req.body.adsPolicy;
     currentLists.push(possibleLists[0]);
   }
   if(req.body.malware == 'on'){
+    possibleLists[1].policy = req.body.malwarePolicy;
     currentLists.push(possibleLists[1]);
   }
   if(req.body.porn == 'on'){
+    possibleLists[2].policy = req.body.pornPolicy;
     currentLists.push(possibleLists[2]);
   }
   if(req.body.custom == 'on'){
+    possibleLists[3].policy = req.body.customPolicy;
     currentLists.push(possibleLists[3]);
   }
   fs.writeFileSync(possibleLists[3].addr, req.body.add);
   for(var item of currentLists){
-    fullString += fs.readFileSync(item.addr);
-    fullString += "\n";
+    currentRule = fs.readFileSync(item.addr, 'utf-8').replace(/\n/g," " + policies.indexOf(item.policy) + "\n");
+    fullString += currentRule;
   }
   fs.writeFileSync("../rules.txt", fullString);
   res.redirect('/rules');
