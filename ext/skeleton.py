@@ -44,7 +44,6 @@ class hostType(Enum):
 	DROPALL = 2
 	ALWAYSDUPLICATE = 3
 def _start_ev(event):
-	mode = "1"
 	connection = event.connection
 	sock = connection.sock
 	ip,port = sock.getpeername()
@@ -63,7 +62,7 @@ def packet_in(event):
 	msg.idle_timeout = 10
 	msg.hard_timeout = 30
 	mode = "1"
-	if packet.find(pkt.ipv4) != None and mode == "1" :
+	if (packet.find(pkt.ipv4) != None or packet.find(pkt.ipv6)!=None) and mode == "1" :
 		source = str(packet.next.srcip)
 		destiny = str(packet.next.dstip)
 	else:
@@ -129,7 +128,6 @@ def packet_in(event):
 			msg.actions.append(action)
 			event.connection.send(msg)
 def launch (bar = False):
-	print ("lendo regras",file=stderr)
 	f = open ("../rules.txt")
 	for line in f:
 		aux = line.split();
