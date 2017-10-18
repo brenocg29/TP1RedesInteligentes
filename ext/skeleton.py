@@ -22,10 +22,12 @@ import pox.openflow.libopenflow_01 as of      # OpenFlow 1.0 library
 import pox.lib.packet as pkt                  # Packet parsing/construction
 from pox.lib.addresses import EthAddr, IPAddr # Address types
 import pox.lib.util as poxutil                # Various util functions
-import pox.lib.revent as revent               # Event library
+import pox.lib.revent as revent       
+import sys;        # Event library
 import pox.lib.recoco as recoco               # Multitasking library
 # Create a logger for this component
 log = core.getLogger()
+sys.stdout = sys.stderr
 mac_port = {}
 admin_port = 3 #change this
 restrict_mac = {}
@@ -127,7 +129,8 @@ def packet_in(event):
 			msg.actions.append(action)
 			event.connection.send(msg)
 def launch (bar = False):
-	f = open ("./rules.txt")
+	print ("lendo regras",file=stderr)
+	f = open ("../rules.txt")
 	for line in f:
 		aux = line.split();
 		ip,rest = aux[0],aux[1]
