@@ -6,6 +6,12 @@ var PythonShell = require('python-shell');
 var fs = require("fs");
 var session = null;
 
+var pythonOptions = {
+  args: [ "skeleton" ],
+  mode: 'text',
+  pythonOptions: ['-u']
+};
+
 var messagesFromPox = [];
 var currentLists = [];
 var currentSwitches = ['127.0.0.1'];
@@ -129,7 +135,7 @@ app.get('/server/restart', function (req, res) {
     });
   }
   messagesFromPox.push('Starting Python module\n');
-  session = new PythonShell('../pox.py',{args: [ "skeleton" ]});
+  session = new PythonShell('../pox.py', pythonOptions);
   session.on('error', function (err) {
     console.log(err.traceback);
     messagesFromPox.push(err.traceback);
