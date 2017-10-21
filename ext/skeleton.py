@@ -27,7 +27,6 @@ import sys;        # Event library
 import pox.lib.recoco as recoco               # Multitasking library
 # Create a logger for this component
 log = core.getLogger()
-sys.stdout = sys.stderr
 mac_port = {}
 admin_port = 3 #change this
 restrict_mac = {}
@@ -55,7 +54,7 @@ def _start_ev(event):
 def packet_in(event):
 	flag = 0
 	packet = event.parse()
-	print event.port
+	print str (event.port) + "\n"
 	msg = of.ofp_packet_out()
 	msg.data = event.ofp
 	source = ""
@@ -78,7 +77,7 @@ def packet_in(event):
 		log.info("send to " + destiny + "known as " + str(mac_port[packet.dst]))
 		if source not in restrict_mac or restrict_mac[source] == "2" :
 			if destiny in restrict_dst and restrict_dst[destiny] == "2":
-				log.info ("Dropped from " + source + "to " + destiny)
+				print ("Dropped from " + source + "to " + destiny + "\n")
 			else:
 				action = of.ofp_action_output(port = mac_port[packet.dst])
 				msg.actions.append(action)
@@ -92,11 +91,11 @@ def packet_in(event):
 				msg.actions.append(action)
 				event.connection.send(msg)
 			else:
-				log.info("Dropped from " + source + "to " + destiny)
+				print("Dropped from " + source + "to " + destiny + "\n")
 			return 
 		if source in restrict_mac and restrict_mac[source] == "3":
 			if destiny in restrict_dst and restrict_dst[destiny] == "2":
-				log.info ("Dropped from " + source +"to " + destiny)
+				print ("Dropped from " + source +"to " + destiny + "\n")
 			else:
 				action = of.ofp_action_output(port = mac_port[packet.dst])
 				msg.actions.append(action)
@@ -105,7 +104,7 @@ def packet_in(event):
 					restrict_dst[packet.dst] = "3"
 		if source in restrict_mac and restrict_mac[source] == "4":
 			if destiny in restrict_dst and restrict_dst[destiny] == "2":
-				log.info ("Dropped from " + source + "to " + destiny)
+				print ("Dropped from " + source + "to " + destiny + "\n")
 			else:
 				if destiny not in restrict_dst or restrict_dst[destiny] != "1":
 					action = of.ofp_action_output(port = admin_port)
@@ -129,7 +128,7 @@ def packet_in(event):
 			event.connection.send(msg)
 def launch (bar = False):
 	f = open ("./rules.txt")
-	print "Lendo regras e iniciando controlador"
+	print "Lendo regras e iniciando controlador\n"
 	for line in f:
 		aux = line.split();
 		ip,rest = aux[0],aux[1]
