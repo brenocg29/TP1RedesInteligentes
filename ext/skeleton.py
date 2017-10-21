@@ -55,7 +55,7 @@ def _start_ev(event):
 def packet_in(event):
 	flag = 0
 	packet = event.parse()
-	log.info(event.port)
+	print event.port
 	msg = of.ofp_packet_out()
 	msg.data = event.ofp
 	source = ""
@@ -128,7 +128,8 @@ def packet_in(event):
 			msg.actions.append(action)
 			event.connection.send(msg)
 def launch (bar = False):
-	f = open ("../rules.txt")
+	f = open ("./rules.txt")
+	print "Lendo regras e iniciando controlador"
 	for line in f:
 		aux = line.split();
 		ip,rest = aux[0],aux[1]
