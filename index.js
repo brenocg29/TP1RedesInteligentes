@@ -45,7 +45,7 @@ var possibleLists = [{
 ];
 
 setInterval(function(){
-  currentSwitches = fs.readFileSync('../switches.txt', 'utf-8').split('\n');
+  currentSwitches = fs.readFileSync('./switches.txt', 'utf-8').split('\n');
 },15000);
 
 app.use(bodyParser.json());
@@ -56,27 +56,27 @@ app.use(bodyParser.urlencoded({
 app.use('/static', express.static(__dirname + '/static'));
 
 app.get('/', function (req, res) {
-  res.sendFile(path.join(__dirname+'/index.html'));
+  res.sendFile(path.join(__dirname+'/html/index.html'));
 });
 
 app.get('/rules', function (req, res) {
-  res.sendFile(path.join(__dirname+'/rules.html'));
+  res.sendFile(path.join(__dirname+'/html/rules.html'));
 });
 
 app.get('/switches', function (req, res) {
-  res.sendFile(path.join(__dirname+'/switches.html'));
+  res.sendFile(path.join(__dirname+'/html/switches.html'));
 });
 
 app.get('/monitor', function (req, res) {
-  res.sendFile(path.join(__dirname+'/monitor.html'));
+  res.sendFile(path.join(__dirname+'/html/monitor.html'));
 });
 
 app.get('/help', function (req, res) {
-  res.sendFile(path.join(__dirname+'/help.html'));
+  res.sendFile(path.join(__dirname+'/html/help.html'));
 });
 
 app.get('/navbar', function (req, res) {
-  res.sendFile(path.join(__dirname+'/navbar.html'));
+  res.sendFile(path.join(__dirname+'/html/navbar.html'));
 });
 
 app.get('/get/rules', function (req, res) {
@@ -120,7 +120,7 @@ app.post('/set/rules', function (req, res) {
     currentRule = fs.readFileSync(item.addr, 'utf-8').replace(/\r\n?|\n/g," " + policies.indexOf(item.policy) + "\n");
     fullString += currentRule;
   }
-  fs.writeFileSync("../rules.txt", fullString);
+  fs.writeFileSync("./rules.txt", fullString);
   res.redirect('/rules');
 });
 
@@ -135,7 +135,7 @@ app.get('/server/restart', function (req, res) {
     });
   }
   messagesFromPox.push('Starting Python module\n');
-  session = new PythonShell('../pox.py', pythonOptions);
+  session = new PythonShell('./pox.py', pythonOptions);
   session.on('error', function (err) {
     console.log(err.traceback);
     messagesFromPox.push(err.traceback);
