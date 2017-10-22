@@ -47,11 +47,16 @@
         $("#navbar-list #nv4").addClass("active");
       });
 
-      $.getJSON( "/get/stdout", function(data) {
-        data.forEach(function(line){
-          $("#codeOutput").append(line);
+      function doQuery(){
+        $.getJSON( "/get/stdout", function(data) {
+          data.forEach(function(line){
+            $("#codeOutput").append(line+"<br/>");
+          });
         });
-      });
+      }
+
+      setInterval(doQuery,1500);
+      doQuery();
     </script>
   </body>
 </html>
