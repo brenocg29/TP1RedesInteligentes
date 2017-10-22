@@ -49,13 +49,14 @@
 
       function doQuery(){
         $.getJSON( "/get/stdout", function(data) {
+          $("#codeOutput").html("");
           data.forEach(function(line){
             $("#codeOutput").append(line+"<br/>");
           });
         });
       }
 
-      setInterval(doQuery,1500);
+      setInterval(doQuery,2500);
       doQuery();
     </script>
   </body>
